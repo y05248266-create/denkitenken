@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品や電気機器の安全な使用と保守点検</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        input[type="number"] {
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+
+        .slide-enter {
+            animation: fadeInRight 0.35s ease-out forwards;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .card-interactive {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-interactive:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(225, 29, 72, 0.2);
+        }
+
+        @keyframes sparkPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.2); }
+        }
+        .animate-spark {
+            animation: sparkPulse 0.9s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.55);
+            }
+            50% {
+                box-shadow: 0 0 0 12px rgba(245, 158, 11, 0);
+            }
+        }
+        .cta-pulse {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-rose-200">
+
+    <!-- Top Header -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30 border-b-4 border-rose-500">
+        <div class="max-w-7xl mx-auto px-4 py-2 sm:px-6 flex items-center justify-between">
+            <!-- App Title & Badge -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-br from-rose-500 to-amber-500 text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-xl shadow-inner">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                        商品や電気機器の安全な使用と保守点検
+                        <span class="text-xs bg-rose-600 text-rose-50 px-2 py-0.5 rounded-full font-bold hidden sm:inline-block">中学校技術科 デジタル教材</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex items-center space-x-2 sm:space-x-4">
+                <button onclick="openIndexModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-slate-700 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 transition active:scale-95" title="目次を開く">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span class="hidden md:inline">目次</span>
+                </button>
+
+                <button onclick="toggleFullscreen()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 transition active:scale-95" title="全画面表示">
+                    <i class="fa-solid fa-expand" id="fullscreenIcon"></i>
+                    <span class="hidden md:inline" id="fullscreenText">大画面</span>
+                </button>
+
+                <div class="bg-slate-950 border border-rose-500/40 text-amber-300 px-3 py-1 rounded-full text-xs sm:text-sm font-mono font-bold">
+                    <span id="currentSlideNum">1</span> / <span id="totalSlideNum">8</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-800 h-2">
+            <div id="progressBar" class="bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-400 h-2 transition-all duration-300 ease-out" style="width: 12.5%;"></div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-3 py-4 sm:px-6 sm:py-6 flex flex-col justify-center">
+        <div id="slideContainer" class="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-5 sm:p-8 min-h-[560px] flex flex-col justify-between relative overflow-hidden transition-all">
+            <div id="slideContent" class="slide-enter flex-grow flex flex-col justify-between">
+                <!-- Dynamic Slide Content Inserted Here by JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <footer class="bg-white border-t border-slate-200 py-3 px-4 shadow-lg sticky bottom-0 z-20">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <button id="prevBtn" onclick="changeSlide(-1)" class="bg-slate-200 hover:bg-slate-300 text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed font-bold px-4 sm:px-6 py-2.5 rounded-xl flex items-center gap-2 transition text-base active:scale-95">
+                <i class="fa-solid fa-chevron-left"></i>
+                <span class="hidden sm:inline">前へ</span>
+            </button>
+
+            <div id="dotIndicators" class="flex items-center space-x-1.5 sm:space-x-2"></div>
+
+            <button id="nextBtn" onclick="changeSlide(1)" class="bg-rose-600 hover:bg-rose-700 text-white font-black px-4 sm:px-6 py-2.5 rounded-xl flex items-center gap-2 transition text-base shadow-md hover:shadow-lg active:scale-95">
+                <span class="hidden sm:inline">次へ</span>
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- Fixed Copyright Notice -->
+    <div class="fixed bottom-3 right-3 z-40 bg-slate-900/90 text-slate-200 backdrop-blur-md text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-lg shadow-lg border border-slate-700 pointer-events-none">
+        ©2026 t-suzuki
+    </div>
+
+    <!-- Slide Index Modal -->
+    <div id="indexModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-200">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-200">
+                <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-rose-500"></i>
+                    学習の目次（スライド一覧）
+                </h2>
+                <button onclick="closeIndexModal()" class="text-slate-400 hover:text-slate-600 text-2xl p-1 rounded-lg hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div id="modalIndexList" class="py-4 grid grid-cols-1 sm:grid-cols-2 gap-3 overflow-y-auto flex-grow"></div>
+
+            <div class="pt-4 border-t border-slate-200 text-right">
+                <button onclick="closeIndexModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2 rounded-xl text-sm">
+                    閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 音響システム (Web Audio API)
+        const playSound = (freq = 440, type = 'sine', duration = 0.08) => {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const ctx = new AudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        };
+
+        // スライド2：電気機器がおこす危険データ
+        const dangerDetails = {
+            leakage: {
+                title: "ろう電 ＆ 感電",
+                badge: "水まわり・絶縁不良に注意",
+                color: "sky",
+                desc: "【ろう電】水ぬれや故障しているところから電気が外にもれること。<br>【感電】もれた電気が人の体に流れること。強い電気が流れると命にかかわる大変危険な事故になります。",
+                svg: `
+                    <svg viewBox="0 0 320 130" class="w-full h-32">
+                        <rect x="30" y="25" width="75" height="80" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+                        <text x="67" y="55" text-anchor="middle" font-size="11" font-weight="bold" fill="#0369a1">洗濯機など</text>
+                        <text x="67" y="75" text-anchor="middle" font-size="11" font-weight="bold" fill="#e11d48">⚡ ろう電</text>
+                        <path d="M95 65 L145 65 L145 110" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="5 4"/>
+                        <circle cx="155" cy="40" r="12" fill="#fed7aa" stroke="#ea580c" stroke-width="2"/>
+                        <rect x="145" y="54" width="20" height="35" rx="5" fill="#fb923c"/>
+                        <line x1="105" y1="65" x2="145" y2="65" stroke="#ea580c" stroke-width="4"/>
+                        <text x="235" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="#be123c">人体を通って地面へ！</text>
+                        <text x="235" y="75" text-anchor="middle" font-size="10" fill="#475569">アース線があれば安全に逃がせる</text>
+                    </svg>
+                `
+            },
+            overheat: {
+                title: "過熱（かねつ）",
+                badge: "たこ足配線・コードを束ねる",
+                color: "amber",
+                desc: "延長コードやテーブルタップに定格以上の電気を流したり、コードを束ねて輪にしたりすると熱がこもって異常に熱くなり、被覆が溶けて火災の原因になります。",
+                svg: `
+                    <svg viewBox="0 0 320 130" class="w-full h-32">
+                        <ellipse cx="95" cy="65" rx="45" ry="22" fill="none" stroke="#334155" stroke-width="6"/>
+                        <ellipse cx="95" cy="65" rx="38" ry="16" fill="none" stroke="#475569" stroke-width="4"/>
+                        <rect x="85" y="38" width="20" height="12" rx="2" fill="#ef4444"/>
+                        <text x="95" y="106" text-anchor="middle" font-size="10" font-weight="bold" fill="#b45309">コードを束ねて輪にしている</text>
+                        <text x="150" y="55" font-size="22" class="animate-spark">🔥</text>
+                        <text x="235" y="58" text-anchor="middle" font-size="12" font-weight="bold" fill="#b45309">熱が逃げず異常過熱！</text>
+                        <text x="235" y="78" text-anchor="middle" font-size="10" fill="#475569">コードは必ず伸ばして使う</text>
+                    </svg>
+                `
+            },
+            short: {
+                title: "短絡（ショート）",
+                badge: "コードの踏みつけ・折れ曲がり",
+                color: "rose",
+                desc: "家具の下敷きになったり強く引っ張られたりしてコード内部の2本の導線どうしが直接触れ、一瞬で巨大な電流が流れて激しい火花が飛び、発火します。",
+                svg: `
+                    <svg viewBox="0 0 320 130" class="w-full h-32">
+                        <rect x="45" y="15" width="35" height="45" fill="#92400e" rx="3"/>
+                        <text x="62" y="42" text-anchor="middle" font-size="9" fill="white" font-weight="bold">机の脚</text>
+                        <line x1="20" y1="62" x2="155" y2="62" stroke="#1e293b" stroke-width="7"/>
+                        <circle cx="62" cy="62" r="14" fill="#fef08a" stroke="#ef4444" stroke-width="2" class="animate-spark"/>
+                        <text x="62" y="66" text-anchor="middle" font-size="14">💥</text>
+                        <text x="225" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="#be123c">2本の導線が接触！</text>
+                        <text x="225" y="75" text-anchor="middle" font-size="10" fill="#475569">激しい火花・火災につながる</text>
+                    </svg>
+                `
+            },
+            tracking: {
+                title: "トラッキング現象",
+                badge: "コンセントとプラグのすき間",
+                color: "orange",
+                desc: "コンセントにプラグを差し込んだまま長期間放置し、すき間にたまったホコリに湿気が加わることで小さな火花放電がくり返され、やがて出火する現象です。",
+                svg: `
+                    <svg viewBox="0 0 320 130" class="w-full h-32">
+                        <rect x="45" y="25" width="42" height="75" rx="5" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+                        <rect x="85" y="42" width="45" height="36" rx="4" fill="#334155"/>
+                        <circle cx="83" cy="52" r="7" fill="#94a3b8" opacity="0.8"/>
+                        <circle cx="83" cy="68" r="8" fill="#cbd5e1" opacity="0.9"/>
+                        <text x="82" y="42" font-size="18" class="animate-spark">🔥</text>
+                        <text x="220" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#c2410c">ホコリ ＋ 湿気 ＝ 出火！</text>
+                        <text x="220" y="72" text-anchor="middle" font-size="10" fill="#475569">冷蔵庫やテレビの裏は特に注意</text>
+                    </svg>
+                `
+            }
+        };
+
+        let activeDangerKey = 'leakage';
+
+        // スライド5：計算練習ドリル用データと状態
+        const appliancePool = [
+            { name: "電気ストーブ", watt: 800, icon: "🔥" },
+            { name: "ノートパソコン", watt: 200, icon: "💻" },
+            { name: "ヘアドライヤー", watt: 1200, icon: "💨" },
+            { name: "電子レンジ", watt: 1000, icon: "🍱" },
+            { name: "電気ケトル", watt: 1250, icon: "🫖" },
+            { name: "オーブントースター", watt: 1000, icon: "🍞" },
+            { name: "ホットプレート", watt: 1300, icon: "🍳" },
+            { name: "液晶テレビ", watt: 150, icon: "📺" },
+            { name: "電気ポット", watt: 700, icon: "☕" },
+            { name: "掃除機", watt: 900, icon: "🧹" },
+            { name: "扇風機", watt: 50, icon: "🌀" },
+            { name: "ゲーム機", watt: 180, icon: "🎮" },
+            { name: "電気こたつ", watt: 500, icon: "♨️" }
+        ];
+
+        // 初期問題はプリントの「問題①」に完全一致させる
+        let calcDrillState = {
+            problemNum: 1,
+            ratedAmp: 15,
+            ratedVolt: 125,
+            supplyVolt: 100,
+            app1: { name: "電気ストーブ", watt: 800, icon: "🔥" },
+            app2: { name: "ノートパソコン", watt: 200, icon: "💻" },
+            ans1: "",
+            ans2: "",
+            ansTotal: "",
+            ansSafe: null, // true = 安全, false = 安全でない
+            checked: false,
+            isAllCorrect: false,
+            streak: 0,
+            solvedCount: 0
+        };
+
+        // スライド7：復習クイズ（全5問）
+        const quizQuestions = [
+            {
+                q: "Q1. コンセントとプラグの間にたまった「ホコリ」と「湿気」が原因で火花が発生し、出火する現象を何という？",
+                options: ["トラッキング現象", "短絡（ショート）", "ろう電"],
+                correct: 0,
+                explanation: "正解は「トラッキング現象」です！冷蔵庫や家具の裏など、長期間差しっぱなしのコンセントは定期的な掃除が大切です。"
+            },
+            {
+                q: "Q2. 洗濯機や電子レンジなどの「ろう電・感電」を防ぐために取り付ける、地中に埋まった銅板などに接続された電線を何という？",
+                options: ["延長コード", "アース線", "フィラメント"],
+                correct: 1,
+                explanation: "正解は「アース線」です！万が一電気機器が漏電しても、電気が人の体ではなくアース線を通って地面へ安全に逃げる仕組みです。"
+            },
+            {
+                q: "Q3. 分電盤（ブレーカー）が作動してスイッチが自動でオフになったとき、正しい復旧手順はどれ？",
+                options: [
+                    "すぐにブレーカーのスイッチをオンにしてから原因を調べる",
+                    "使用している機器の電源を切ってから、ブレーカーのスイッチをオンにする",
+                    "濡れた手のままブレーカーのスイッチを強く押し込む"
+                ],
+                correct: 1,
+                explanation: "正解は「使用している機器の電源を切ってから、スイッチをオンにする」です！機器をつないだままだと再び過電流が流れて危険です。"
+            },
+            {
+                q: "Q4. 定格 15A・125V のテーブルタップ（電源100V）に、1000Wの電子レンジと 700Wの電気ポットを同時につないだ。合計電流は何Aで、安全に使用できるか？",
+                options: [
+                    "合計 17A → 定格15Aを超えるため「安全でない」",
+                    "合計 17A → 125V未満なので「安全」",
+                    "合計 1.7A → 定格15A以下なので「安全」"
+                ],
+                correct: 0,
+                explanation: "正解は「合計 17A → 安全でない」です！1000W÷100V＝10A、700W÷100V＝7A、合計17Aとなり、定格15Aを超えるため火災の危険があります。"
+            },
+            {
+                q: "Q5. 電気用品安全法（PSE法）で定められた、電線類・配線器具・電熱器具など特に安全性が必要とされる116品目「特定電気用品」につけられるマークはどれ？",
+                options: ["ひし形のPSEマーク", "丸形のPSEマーク", "三角のJISマーク"],
+                correct: 0,
+                explanation: "正解は「ひし形のPSEマーク」です！特定電気用品はひし形、それ以外の電気用品は丸形のPSEマークが表示されます。"
+            }
+        ];
+
+        let quizState = {
+            current: 0,
+            score: 0,
+            answered: false
+        };
+
+        // スライド全データ構成
+        const slidesData = [
+            {
+                id: 1,
+                tag: "1. 本日の目標",
+                title: "商品や電気機器を安全に使用する大切さを学ぼう",
+                subtitle: "【目標】電気機器や商品を使用する上での危険性について理解する。",
+                render: () => `
+                    <div class="space-y-5 my-auto">
+                        <div class="bg-gradient-to-r from-rose-600 via-red-600 to-amber-600 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden">
+                            <div class="absolute -right-4 -bottom-6 text-white/15 text-9xl font-black select-none pointer-events-none">SAFETY</div>
+                            <span class="inline-block bg-slate-950 text-amber-300 font-extrabold text-xs px-3 py-1 rounded-full tracking-wider mb-2">今日の学習目標</span>
+                            <h3 class="text-xl sm:text-3xl font-black leading-snug drop-shadow-sm">
+                                電気機器や商品を使用する上での<br class="hidden sm:inline">危険性について理解する。
+                            </h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-rose-50 border border-rose-200 rounded-xl p-4">
+                                <div class="flex items-center gap-2 font-bold text-rose-900 mb-1">
+                                    <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> ① 電気機器がおこす危険
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                                    <strong>ろう電・感電・過熱・短絡（ショート）・トラッキング現象</strong>の仕組みと事故の原因を学びます。
+                                </p>
+                            </div>
+                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                                <div class="flex items-center gap-2 font-bold text-amber-900 mb-1">
+                                    <i class="fa-solid fa-calculator text-amber-600"></i> ② 危険対策と定格電流の計算
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                                    <strong>アース線・分電盤</strong>の働きや、テーブルタップに流れる<strong>電流[A]の計算練習</strong>を行います。
+                                </p>
+                            </div>
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                                <div class="flex items-center gap-2 font-bold text-emerald-900 mb-1">
+                                    <i class="fa-solid fa-tag text-emerald-600"></i> ③ 商品購入時の注意点・PSE
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                                    消費者としての正しい判断力や、<strong>3R</strong>、安全の証である<strong>PSEマーク</strong>を学びます。
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2.5">
+                            <p class="font-bold text-slate-700 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-list-check text-rose-600"></i>
+                                学習のチェックポイント（クリックしてチェックしよう）
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <label class="flex items-center gap-3 p-2.5 bg-white border border-slate-200 hover:bg-rose-50 rounded-xl cursor-pointer transition">
+                                    <input type="checkbox" onchange="playSound(600)" class="w-4 h-4 accent-rose-600 rounded">
+                                    <span class="text-xs sm:text-sm font-semibold text-slate-800">ろう電・感電・過熱・短絡・トラッキング現象の違いを説明できる</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2.5 bg-white border border-slate-200 hover:bg-rose-50 rounded-xl cursor-pointer transition">
+                                    <input type="checkbox" onchange="playSound(650)" class="w-4 h-4 accent-rose-600 rounded">
+                                    <span class="text-xs sm:text-sm font-semibold text-slate-800">アース線や分電盤（3つの遮断器）の役割と復旧手順がわかる</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2.5 bg-white border border-slate-200 hover:bg-rose-50 rounded-xl cursor-pointer transition">
+                                    <input type="checkbox" onchange="playSound(700)" class="w-4 h-4 accent-rose-600 rounded">
+                                    <span class="text-xs sm:text-sm font-semibold text-slate-800">電力[W]÷電圧[V]から電流[A]を求め、定格値内か判断できる</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-2.5 bg-white border border-slate-200 hover:bg-rose-50 rounded-xl cursor-pointer transition">
+                                    <input type="checkbox" onchange="playSound(750)" class="w-4 h-4 accent-rose-600 rounded">
+                                    <span class="text-xs sm:text-sm font-semibold text-slate-800">PSEマーク（ひし形・丸形）や3Rの意味を理解している</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                tag: "2. 電気機器がおこす危険",
+                title: "身近にひそむ電気事故の仕組み",
+                subtitle: "タブを切り替えて、4つの危険現象の仕組みとイラスト図解を確認しよう！",
+                render: () => {
+                    const current = dangerDetails[activeDangerKey];
+                    return `
+                        <div class="space-y-4 my-auto">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <button onclick="switchDanger('leakage')" class="p-2.5 rounded-xl font-bold text-xs sm:text-sm border-2 transition ${activeDangerKey === 'leakage' ? 'bg-sky-600 text-white border-sky-700 shadow' : 'bg-white text-slate-700 border-slate-200 hover:bg-sky-50'}">
+                                    💧 ろう電・感電
+                                </button>
+                                <button onclick="switchDanger('overheat')" class="p-2.5 rounded-xl font-bold text-xs sm:text-sm border-2 transition ${activeDangerKey === 'overheat' ? 'bg-amber-500 text-slate-950 border-amber-600 shadow' : 'bg-white text-slate-700 border-slate-200 hover:bg-amber-50'}">
+                                    🔥 過熱（かねつ）
+                                </button>
+                                <button onclick="switchDanger('short')" class="p-2.5 rounded-xl font-bold text-xs sm:text-sm border-2 transition ${activeDangerKey === 'short' ? 'bg-rose-600 text-white border-rose-700 shadow' : 'bg-white text-slate-700 border-slate-200 hover:bg-rose-50'}">
+                                    💥 短絡（ショート）
+                                </button>
+                                <button onclick="switchDanger('tracking')" class="p-2.5 rounded-xl font-bold text-xs sm:text-sm border-2 transition ${activeDangerKey === 'tracking' ? 'bg-orange-600 text-white border-orange-700 shadow' : 'bg-white text-slate-700 border-slate-200 hover:bg-orange-50'}">
+                                    🔌 トラッキング現象
+                                </button>
+                            </div>
+
+                            <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5 grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                                <div class="md:col-span-6 space-y-2.5">
+                                    <span class="inline-block bg-rose-100 text-rose-800 text-xs font-extrabold px-3 py-1 rounded-full">
+                                        ⚠️ ${current.badge}
+                                    </span>
+                                    <h3 class="text-xl sm:text-2xl font-black text-slate-900">
+                                        ${current.title}
+                                    </h3>
+                                    <p class="text-xs sm:text-sm text-slate-700 leading-relaxed bg-white p-4 rounded-xl border border-slate-200">
+                                        ${current.desc}
+                                    </p>
+                                </div>
+                                <div class="md:col-span-6 bg-white border border-slate-200 rounded-2xl p-3 shadow-inner">
+                                    ${current.svg}
+                                </div>
+                            </div>
+
+                            <!-- 5用語の早見まとめ -->
+                            <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
+                                <div class="bg-sky-50 border border-sky-200 p-2.5 rounded-xl">
+                                    <div class="font-black text-sky-900">① ろう電</div>
+                                    <div class="text-slate-600 mt-0.5">水ぬれや故障箇所から電気がもれること</div>
+                                </div>
+                                <div class="bg-indigo-50 border border-indigo-200 p-2.5 rounded-xl">
+                                    <div class="font-black text-indigo-900">② 感電</div>
+                                    <div class="text-slate-600 mt-0.5">電気が人の体に流れること</div>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-200 p-2.5 rounded-xl">
+                                    <div class="font-black text-amber-900">③ 過熱</div>
+                                    <div class="text-slate-600 mt-0.5">延長コードや束ねたコードが熱くなること</div>
+                                </div>
+                                <div class="bg-rose-50 border border-rose-200 p-2.5 rounded-xl">
+                                    <div class="font-black text-rose-900">④ 短絡(ショート)</div>
+                                    <div class="text-slate-600 mt-0.5">2本の導線どうしが触れ火花が飛ぶこと</div>
+                                </div>
+                                <div class="bg-orange-50 border border-orange-200 p-2.5 rounded-xl">
+                                    <div class="font-black text-orange-900">⑤ トラッキング</div>
+                                    <div class="text-slate-600 mt-0.5">ホコリと湿気が原因でプラグ間から出火</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            },
+            {
+                id: 3,
+                tag: "3. 危険を防ぐ対策と分電盤",
+                title: "電気事故を防ぐ対策 ＆ 分電盤（ブレーカー）",
+                subtitle: "アース線の働きと、家の中の電気を守る3種類の遮断器を覚えよう！",
+                render: () => `
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 my-auto">
+                        <!-- 左側：3つの危険対策 -->
+                        <div class="lg:col-span-6 space-y-3">
+                            <div class="bg-teal-50 border-2 border-teal-200 rounded-2xl p-4">
+                                <h3 class="font-black text-teal-950 text-sm sm:text-base flex items-center gap-2 mb-1.5">
+                                    <i class="fa-solid fa-plug text-teal-600"></i>
+                                    【ろう電・感電対策】アース線の取り付け
+                                </h3>
+                                <p class="text-xs text-slate-700 leading-relaxed mb-2.5">
+                                    <strong>アース線</strong>（地中に埋まった銅板などに接続されている緑と黄色の電線）をつなぐと、漏電した電気を人体ではなく地面へ安全に逃がすことができます。
+                                </p>
+                                <div class="grid grid-cols-2 gap-2 text-center text-[11px]">
+                                    <div class="bg-rose-100/80 border border-rose-300 rounded-xl p-2">
+                                        <div class="font-black text-rose-800">❌ アース線なし</div>
+                                        <div class="text-slate-700 mt-0.5">漏電すると触れた人の体を通って感電！</div>
+                                    </div>
+                                    <div class="bg-emerald-100/80 border border-emerald-300 rounded-xl p-2">
+                                        <div class="font-black text-emerald-800">⭕ アース線あり</div>
+                                        <div class="text-slate-700 mt-0.5">漏電してもアース線を通って地中へ安全に逃げる！</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-orange-50 border border-orange-200 rounded-xl p-3.5">
+                                <h4 class="font-bold text-orange-950 text-xs sm:text-sm mb-1">
+                                    🧹 【トラッキング現象対策】
+                                </h4>
+                                <p class="text-xs text-slate-700">
+                                    コンセントまわりの<strong>定期的な掃除</strong>と、コードに傷や異常がないか日ごろから確認することが大切です。
+                                </p>
+                            </div>
+
+                            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+                                <h4 class="font-bold text-amber-950 text-xs sm:text-sm mb-1">
+                                    📏 【過熱・短絡（ショート）対策】
+                                </h4>
+                                <p class="text-xs text-slate-700">
+                                    延長コードなどは<strong>束ねずに伸ばして使い</strong>、家具の下敷きになるなど圧力がかからないように配置します。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 右側：分電盤（ブレーカー） -->
+                        <div class="lg:col-span-6 bg-slate-900 text-white rounded-2xl p-5 flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <h3 class="font-black text-amber-400 text-base sm:text-lg flex items-center gap-2">
+                                        <i class="fa-solid fa-toggle-on"></i> 分電盤（ブレーカー）のしくみ
+                                    </h3>
+                                    <span class="text-[11px] bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full">自動安全装置</span>
+                                </div>
+                                <p class="text-xs text-slate-300 mb-3">
+                                    屋内配線が危険な状態になると、自動的に回路が切れる機器の集まりです。
+                                </p>
+
+                                <div class="space-y-2 text-xs">
+                                    <div class="bg-slate-800 border-l-4 border-sky-400 p-2.5 rounded-r-xl">
+                                        <div class="font-black text-sky-300">① 電流制限器（アンペアブレーカー）</div>
+                                        <div class="text-slate-300 mt-0.5">家全体の電気使用量が<strong>契約電流を超えたとき</strong>に作動する。</div>
+                                    </div>
+                                    <div class="bg-slate-800 border-l-4 border-emerald-400 p-2.5 rounded-r-xl">
+                                        <div class="font-black text-emerald-300">② 漏電遮断器（ろうでんしゃだんき）</div>
+                                        <div class="text-slate-300 mt-0.5">屋内配線や機器が<strong>漏電したとき</strong>に作動して感電・火災を防ぐ。</div>
+                                    </div>
+                                    <div class="bg-slate-800 border-l-4 border-rose-400 p-2.5 rounded-r-xl">
+                                        <div class="font-black text-rose-300">③ 配線用遮断器（安全ブレーカー）</div>
+                                        <div class="text-slate-300 mt-0.5">各部屋の回路に<strong>過電流（使いすぎ・ショート）が流れたとき</strong>に作動する。</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-500/20 border border-amber-400/50 rounded-xl p-3 text-xs">
+                                <div class="font-black text-amber-300 mb-1">
+                                    <i class="fa-solid fa-wrench mr-1"></i> ブレーカーが作動したときの正しい復旧方法
+                                </div>
+                                <p class="text-amber-50 leading-relaxed">
+                                    自動でオフになったスイッチを、<strong>①使用している機器の電源を切ってから</strong>、<strong>②スイッチをオンにする</strong>。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 4,
+                tag: "4. 定格値と電流計算の解説",
+                title: "テーブルタップの定格値と流れる電流の計算方法",
+                subtitle: "定格値（流してよい最大の電流）を超えると異常発熱し、火災のおそれがあります！",
+                render: () => `
+                    <div class="space-y-4 my-auto">
+                        <!-- 計算公式ボックス -->
+                        <div class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="text-center sm:text-left">
+                                <span class="text-xs font-bold text-amber-400">重要公式（並列回路の電流計算）</span>
+                                <div class="text-lg sm:text-2xl font-black tracking-wide mt-0.5">
+                                    電力 [W] ＝ 電流 [A] × 電圧 [V]
+                                </div>
+                            </div>
+                            <div class="bg-amber-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-sm sm:text-base shadow">
+                                電流 [A] ＝ 電力 [W] ÷ 電圧 [V]
+                            </div>
+                        </div>
+
+                        <!-- 安全な使用例 vs 危険な使用例 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- 安全な使用例 -->
+                            <div class="bg-emerald-50/70 border-2 border-emerald-300 rounded-2xl p-4 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-emerald-600 text-white font-black text-xs px-3 py-1 rounded-full">⭕ 安全な使用例</span>
+                                    <span class="text-xs font-bold text-emerald-800">定格値：15A, 125V（電源100V）</span>
+                                </div>
+                                <div class="bg-white rounded-xl p-3 border border-emerald-200 text-xs space-y-1.5">
+                                    <div class="flex justify-between font-bold text-slate-700">
+                                        <span>🔥 電気ストーブ（800W）</span>
+                                        <span>800W ÷ 100V ＝ <strong>8.0A</strong></span>
+                                    </div>
+                                    <div class="flex justify-between font-bold text-slate-700">
+                                        <span>💻 ノートパソコン（22W）</span>
+                                        <span>22W ÷ 100V ＝ <strong>0.22A</strong></span>
+                                    </div>
+                                    <div class="border-t border-dashed border-slate-300 pt-1.5 flex justify-between font-black text-emerald-700 text-sm">
+                                        <span>テーブルタップの合計電流</span>
+                                        <span>8.22A（15A以下で安全！）</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 危険な使用例 -->
+                            <div class="bg-rose-50/70 border-2 border-rose-300 rounded-2xl p-4 space-y-2.5">
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-rose-600 text-white font-black text-xs px-3 py-1 rounded-full">❌ 危険な使用例</span>
+                                    <span class="text-xs font-bold text-rose-800">定格値：15A, 125V（電源100V）</span>
+                                </div>
+                                <div class="bg-white rounded-xl p-3 border border-rose-200 text-xs space-y-1.5">
+                                    <div class="flex justify-between font-bold text-slate-700">
+                                        <span>🍞 オーブントースター（1,000W）</span>
+                                        <span>1,000W ÷ 100V ＝ <strong>10.0A</strong></span>
+                                    </div>
+                                    <div class="flex justify-between font-bold text-slate-700">
+                                        <span>🫖 電気ケトル（1,250W）</span>
+                                        <span>1,250W ÷ 100V ＝ <strong>12.5A</strong></span>
+                                    </div>
+                                    <div class="border-t border-dashed border-slate-300 pt-1.5 flex justify-between font-black text-rose-600 text-sm">
+                                        <span>テーブルタップの合計電流</span>
+                                        <span>22.5A（7.5Aもオーバー！）</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3つの計算ポイント -->
+                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-slate-700 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div>📌 <strong>ポイント①</strong>：通常の家庭用電源は <strong>100V</strong>。</div>
+                            <div>📌 <strong>ポイント②</strong>：テーブルタップは<strong>並列回路</strong>なので各機器にかかる電圧は100Vで等しい。</div>
+                            <div>📌 <strong>ポイント③</strong>：全体の電流は、<strong>各機器に流れる電流の和（足し算）</strong>に等しい。</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 5,
+                tag: "5. 計算練習ドリル（ランダム出題）",
+                title: "テーブルタップ電流計算 練習ドリル",
+                subtitle: "数値を入力して答え合わせしよう！問題ボタンを押すとランダムに新しい問題が出題されます。",
+                render: () => renderCalcDrillSlide()
+            },
+            {
+                id: 6,
+                tag: "6. 商品購入時の注意点とPSE・3R",
+                title: "消費者としての注意点・3R・PSEマーク",
+                subtitle: "製品表示や安全マークの意味を知り、安全で環境にやさしい選択をしよう！",
+                render: () => `
+                    <div class="space-y-4 my-auto">
+                        <!-- 上段：消費者判断 ＆ 3R -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-pink-50/70 border border-pink-200 rounded-2xl p-4">
+                                <span class="bg-pink-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">製品表示・マーク</span>
+                                <h3 class="font-black text-slate-900 text-base mt-2 mb-1">賢い消費者としての判断</h3>
+                                <p class="text-xs text-slate-700 leading-relaxed">
+                                    事故やトラブルを防ぐためには、<strong>安すぎる商品に飛びつかない</strong>、<strong>注意表示や安全マークを確認する</strong>、契約内容を理解することが大切です。
+                                </p>
+                            </div>
+
+                            <div class="bg-amber-50/70 border border-amber-200 rounded-2xl p-4">
+                                <span class="bg-amber-500 text-slate-950 text-xs font-black px-2.5 py-0.5 rounded-full">環境問題への配慮</span>
+                                <h3 class="font-black text-slate-900 text-base mt-2 mb-1">3R（スリーアール）の実践</h3>
+                                <p class="text-xs text-slate-700 leading-relaxed">
+                                    <strong>リデュース</strong>（ごみを減らす）・<strong>リユース</strong>（再利用する）・<strong>リサイクル</strong>（再資源化する）の頭文字を取った、地球に優しいエコライフのキーワードです。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 下段：PSEマーク比較と経産省サイトリンク -->
+                        <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 space-y-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <h3 class="font-black text-slate-900 text-base">電気用品安全法（PSE法）の2つのPSEマーク</h3>
+                                    <p class="text-xs text-slate-600">国の安全基準を満たした電気製品に表示される義務があるマークです。</p>
+                                </div>
+                                <a href="https://www.meti.go.jp/policy/consumer/seian/denan/specified_electrical.html" target="_blank" rel="noopener noreferrer"
+                                   onclick="playSound(800)"
+                                   class="cta-pulse bg-slate-900 hover:bg-slate-800 text-amber-300 text-xs font-black px-4 py-2.5 rounded-xl inline-flex items-center gap-2 shrink-0 transition shadow">
+                                    <i class="fa-solid fa-up-right-from-square"></i>
+                                    いろいろな特定電気用品 一覧（経産省）
+                                </a>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- ひし形PSE -->
+                                <div class="bg-white border-2 border-rose-200 rounded-xl p-3.5 flex items-center gap-4">
+                                    <svg viewBox="0 0 100 100" class="w-16 h-16 shrink-0">
+                                        <polygon points="50,6 94,50 50,94 6,50" fill="white" stroke="#0f172a" stroke-width="5"/>
+                                        <text x="50" y="47" text-anchor="middle" font-size="22" font-weight="900" fill="#0f172a">PS</text>
+                                        <text x="50" y="73" text-anchor="middle" font-size="22" font-weight="900" fill="#0f172a">E</text>
+                                    </svg>
+                                    <div>
+                                        <span class="bg-rose-100 text-rose-800 text-[11px] font-black px-2 py-0.5 rounded">ひし形PSEマーク</span>
+                                        <h4 class="font-black text-slate-900 text-sm mt-1">特定電気用品（116品目）</h4>
+                                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                                            特に安全性が必要とされる製品（電線類、配線器具、テーブルタップ、電熱器具、ACアダプターなど）。
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- 丸形PSE -->
+                                <div class="bg-white border-2 border-sky-200 rounded-xl p-3.5 flex items-center gap-4">
+                                    <svg viewBox="0 0 100 100" class="w-16 h-16 shrink-0">
+                                        <circle cx="50" cy="50" r="42" fill="white" stroke="#0f172a" stroke-width="5"/>
+                                        <text x="50" y="47" text-anchor="middle" font-size="22" font-weight="900" fill="#0f172a">PS</text>
+                                        <text x="50" y="73" text-anchor="middle" font-size="22" font-weight="900" fill="#0f172a">E</text>
+                                    </svg>
+                                    <div>
+                                        <span class="bg-sky-100 text-sky-800 text-[11px] font-black px-2 py-0.5 rounded">丸形PSEマーク</span>
+                                        <h4 class="font-black text-slate-900 text-sm mt-1">特定電気用品以外の電気用品</h4>
+                                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                                            一般的な家電製品（テレビ、洗濯機、冷蔵庫、照明器具、リチウムイオン蓄電池など）。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 7,
+                tag: "7. 復習クイズ（全5問）",
+                title: "電気の安全と保守点検 マスタークイズ",
+                subtitle: "学習した内容から全5問出題！全問正解を目指してチャレンジしよう！",
+                render: () => renderQuizSlide()
+            },
+            {
+                id: 8,
+                tag: "8. まとめ＆安全点検・体験サイトへ",
+                title: "学習のまとめ ＆ 保守点検パトロール体験！",
+                subtitle: "学んだ知識を確認したら、実際の「電気機器の保守点検パトロール」に挑戦しよう！",
+                render: () => `
+                    <div class="space-y-4 my-auto">
+                        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-rose-950 text-white rounded-2xl p-4 sm:p-5 shadow-lg">
+                            <h3 class="text-base sm:text-lg font-black text-amber-300 mb-2.5 flex items-center gap-2">
+                                <i class="fa-solid fa-star"></i> 今日の重要ポイント振り返り
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                                <div class="bg-white/10 rounded-xl p-2.5">
+                                    <span class="font-bold text-rose-300 block mb-0.5">1. 危険の予防</span>
+                                    水まわり機器には<strong>アース線</strong>をつけ、プラグのホコリ掃除で<strong>トラッキング現象</strong>を防ぐ。
+                                </div>
+                                <div class="bg-white/10 rounded-xl p-2.5">
+                                    <span class="font-bold text-amber-300 block mb-0.5">2. 定格電流の厳守</span>
+                                    テーブルタップは<strong>合計電流[A]が定格値（15Aなど）以下</strong>になるよう計算して使う。
+                                </div>
+                                <div class="bg-white/10 rounded-xl p-2.5">
+                                    <span class="font-bold text-emerald-300 block mb-0.5">3. 分電盤の正しい復旧</span>
+                                    ブレーカーが落ちたら、<strong>機器の電源を切ってから</strong>スイッチをオンにする。
+                                </div>
+                                <div class="bg-white/10 rounded-xl p-2.5">
+                                    <span class="font-bold text-sky-300 block mb-0.5">4. PSEマークと3R</span>
+                                    購入時は<strong>ひし形・丸形のPSEマーク</strong>や注意表示を確認し、環境に配慮する。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3.5 space-y-2">
+                            <h4 class="font-black text-emerald-950 text-xs sm:text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-house-circle-check text-emerald-600"></i>
+                                家庭での電気安全点検セルフチェック（実行できたらチェック！）
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <label class="flex items-center gap-2 bg-white p-2 rounded-xl border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" onchange="playSound(620)" class="w-4 h-4 accent-emerald-600">
+                                    <span>テレビや冷蔵庫の裏のコンセントにホコリがたまっていない</span>
+                                </label>
+                                <label class="flex items-center gap-2 bg-white p-2 rounded-xl border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" onchange="playSound(660)" class="w-4 h-4 accent-emerald-600">
+                                    <span>延長コードを束ねたまま使ったり、家具で踏んだりしていない</span>
+                                </label>
+                                <label class="flex items-center gap-2 bg-white p-2 rounded-xl border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" onchange="playSound(700)" class="w-4 h-4 accent-emerald-600">
+                                    <span>消費電力の大きい家電を1つのテーブルタップに集中させていない</span>
+                                </label>
+                                <label class="flex items-center gap-2 bg-white p-2 rounded-xl border border-emerald-200 cursor-pointer">
+                                    <input type="checkbox" onchange="playSound(740)" class="w-4 h-4 accent-emerald-600">
+                                    <span>洗濯機や電子レンジにアース線が正しく接続されている</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 外部体験サイト CTAカード -->
+                        <div class="bg-gradient-to-r from-rose-900 via-slate-900 to-amber-950 text-white rounded-2xl p-5 shadow-xl border-2 border-amber-400/40 text-center relative overflow-hidden">
+                            <div class="relative z-10 max-w-2xl mx-auto space-y-2.5">
+                                <span class="bg-amber-400 text-slate-950 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider inline-block shadow">
+                                    Web体験シミュレーションへGO！
+                                </span>
+
+                                <h3 class="text-lg sm:text-2xl font-black text-white leading-snug">
+                                    実践！「電気機器の保守点検パトロール」
+                                </h3>
+
+                                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                                    部屋の中にひそむ電気の危険箇所を探し出して安全に点検しよう！<br class="hidden sm:inline">
+                                    今日学んだ「トラッキング現象」「たこ足配線」「アース線」などの知識を活かしてパトロールに挑戦！
+                                </p>
+
+                                <div class="pt-1">
+                                    <a href="https://y05248266-create.github.io/denkikitenken/" target="_blank" rel="noopener noreferrer"
+                                       onclick="playSound(800)"
+                                       class="cta-pulse inline-flex items-center justify-center gap-3 bg-gradient-to-r from-rose-600 to-amber-500 hover:from-rose-500 hover:to-amber-400 text-white font-black text-sm sm:text-lg px-7 py-3 rounded-2xl transition shadow-xl hover:scale-105 active:scale-95">
+                                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                                        電気機器の保守点検パトロールを開く
+                                        <i class="fa-solid fa-arrow-up-right-from-square text-xs opacity-90"></i>
+                                    </a>
+                                </div>
+                                <p class="text-[11px] text-slate-400">※ 新しいタブで体験サイトが開きます</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // スライド2：危険切替
+        function switchDanger(key) {
+            playSound(600);
+            activeDangerKey = key;
+            renderSlide(currentSlideIndex);
+        }
+
+        // スライド5：計算練習ドリル描画・ロジック
+        function renderCalcDrillSlide() {
+            const s = calcDrillState;
+            const expected1 = Number((s.app1.watt / s.supplyVolt).toFixed(2));
+            const expected2 = Number((s.app2.watt / s.supplyVolt).toFixed(2));
+            const expectedTotal = Number((expected1 + expected2).toFixed(2));
+            const expectedSafe = expectedTotal <= s.ratedAmp;
+
+            return `
+                <div class="space-y-4 my-auto">
+                    <!-- 問題ヘッダー＆ランダム出題コントロール -->
+                    <div class="bg-slate-900 text-white rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <span class="bg-amber-400 text-slate-950 font-black px-3 py-1 rounded-lg text-xs sm:text-sm">
+                                ${s.problemNum === 1 ? "プリント問題①" : `練習問題 #${s.problemNum}`}
+                            </span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-200">
+                                連続正解：<strong class="text-amber-300 text-base">${s.streak}</strong> 問 ／ 累計クリア：<strong class="text-emerald-300 text-base">${s.solvedCount}</strong> 問
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="setWorksheetProblem()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-xs font-bold px-3 py-2 rounded-xl transition">
+                                プリント問題①に戻す
+                            </button>
+                            <button onclick="generateRandomCalcProblem()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-black px-4 py-2 rounded-xl transition shadow flex items-center gap-1.5 active:scale-95">
+                                <i class="fa-solid fa-shuffle"></i> 別の問題に挑戦（ランダム出題）
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 問題文カード -->
+                    <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4">
+                        <p class="text-sm sm:text-base font-black text-slate-900 leading-relaxed">
+                            【問題】定格 <span class="text-rose-600 underline decoration-2">${s.ratedAmp}A</span>・${s.ratedVolt}V のテーブルタップに、
+                            <span class="bg-white px-2 py-0.5 rounded border border-amber-300 mx-1">${s.app1.icon} ${s.app1.name}：${s.app1.watt}W</span> と
+                            <span class="bg-white px-2 py-0.5 rounded border border-amber-300 mx-1">${s.app2.icon} ${s.app2.name}：${s.app2.watt}W</span>
+                            をつないだ。家庭用電源は <span class="text-blue-700 font-black">${s.supplyVolt}V</span> とする。
+                        </p>
+                    </div>
+
+                    <!-- 解答入力フォーム（①〜④） -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <!-- ① -->
+                        <div class="bg-white border-2 border-slate-200 rounded-xl p-3.5 space-y-2">
+                            <label class="block text-xs font-black text-slate-700">
+                                ① ${s.app1.name}に流れる電流は？
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" step="0.01" id="calcInput1" value="${s.ans1}"
+                                    oninput="calcDrillState.ans1 = this.value"
+                                    placeholder="例: 8"
+                                    class="w-full border-2 border-slate-300 focus:border-amber-500 rounded-lg px-3 py-2 font-mono font-black text-base outline-none">
+                                <span class="font-black text-slate-700">A</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400">${s.app1.watt}W ÷ ${s.supplyVolt}V</div>
+                        </div>
+
+                        <!-- ② -->
+                        <div class="bg-white border-2 border-slate-200 rounded-xl p-3.5 space-y-2">
+                            <label class="block text-xs font-black text-slate-700">
+                                ② ${s.app2.name}に流れる電流は？
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" step="0.01" id="calcInput2" value="${s.ans2}"
+                                    oninput="calcDrillState.ans2 = this.value"
+                                    placeholder="例: 2"
+                                    class="w-full border-2 border-slate-300 focus:border-amber-500 rounded-lg px-3 py-2 font-mono font-black text-base outline-none">
+                                <span class="font-black text-slate-700">A</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400">${s.app2.watt}W ÷ ${s.supplyVolt}V</div>
+                        </div>
+
+                        <!-- ③ -->
+                        <div class="bg-white border-2 border-slate-200 rounded-xl p-3.5 space-y-2">
+                            <label class="block text-xs font-black text-slate-700">
+                                ③ テーブルタップの合計電流は？
+                            </label>
+                            <div class="flex items-center gap-2">
+                                <input type="number" step="0.01" id="calcInputTotal" value="${s.ansTotal}"
+                                    oninput="calcDrillState.ansTotal = this.value"
+                                    placeholder="① + ②"
+                                    class="w-full border-2 border-slate-300 focus:border-amber-500 rounded-lg px-3 py-2 font-mono font-black text-base outline-none">
+                                <span class="font-black text-slate-700">A</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400">定格値：${s.ratedAmp}A</div>
+                        </div>
+
+                        <!-- ④ -->
+                        <div class="bg-white border-2 border-slate-200 rounded-xl p-3.5 space-y-2 flex flex-col justify-between">
+                            <label class="block text-xs font-black text-slate-700">
+                                ④ 安全に使用できるか？
+                            </label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="selectCalcSafe(true)"
+                                    class="py-2 px-2 rounded-lg font-black text-xs border-2 transition ${s.ansSafe === true ? 'bg-emerald-600 text-white border-emerald-700 shadow' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-emerald-50'}">
+                                    ⭕ 安全
+                                </button>
+                                <button type="button" onclick="selectCalcSafe(false)"
+                                    class="py-2 px-2 rounded-lg font-black text-xs border-2 transition ${s.ansSafe === false ? 'bg-rose-600 text-white border-rose-700 shadow' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-rose-50'}">
+                                    ❌ 安全でない
+                                </button>
+                            </div>
+                            <div class="text-[11px] text-slate-400 text-center">どちらかを選択</div>
+                        </div>
+                    </div>
+
+                    <!-- 答え合わせボタン -->
+                    <div class="flex justify-center">
+                        <button onclick="checkCalcDrill()" class="bg-rose-600 hover:bg-rose-700 text-white font-black px-8 py-3 rounded-xl text-sm sm:text-base shadow-md transition active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-check-double"></i> 答え合わせをする
+                        </button>
+                    </div>
+
+                    <!-- 判定結果＆途中式解説 -->
+                    ${s.checked ? `
+                        <div class="rounded-2xl p-4 border-2 ${s.isAllCorrect ? 'bg-emerald-50 border-emerald-400 text-emerald-950' : 'bg-rose-50 border-rose-400 text-rose-950'} space-y-2">
+                            <div class="font-black text-base flex items-center gap-2">
+                                ${s.isAllCorrect
+                                    ? '🎉 全問大正解！よくできました！次のランダム問題にも挑戦してみよう！'
+                                    : '💡 惜しい！下の途中計算式を確認して直してみよう！'}
+                            </div>
+                            <div class="bg-white/90 rounded-xl p-3 text-xs sm:text-sm font-mono space-y-1 text-slate-800 border border-slate-200">
+                                <div>① ${s.app1.name}の電流： ${s.app1.watt}W ÷ ${s.supplyVolt}V ＝ <strong>${expected1}A</strong></div>
+                                <div>② ${s.app2.name}の電流： ${s.app2.watt}W ÷ ${s.supplyVolt}V ＝ <strong>${expected2}A</strong></div>
+                                <div>③ 合計電流： ${expected1}A ＋ ${expected2}A ＝ <strong>${expectedTotal}A</strong></div>
+                                <div>④ 判定： 定格 <strong>${s.ratedAmp}A</strong> に対して ${expectedTotal}A なので → <strong>${expectedSafe ? '「安全」（定格値以内）' : '「安全でない」（定格値オーバーで危険！）'}</strong></div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function selectCalcSafe(val) {
+            playSound(580);
+            calcDrillState.ansSafe = val;
+            renderSlide(currentSlideIndex);
+        }
+
+        function checkCalcDrill() {
+            const s = calcDrillState;
+            const v1 = parseFloat(s.ans1);
+            const v2 = parseFloat(s.ans2);
+            const vTotal = parseFloat(s.ansTotal);
+
+            if (isNaN(v1) || isNaN(v2) || isNaN(vTotal) || s.ansSafe === null) {
+                playSound(250, 'sawtooth', 0.15);
+                s.checked = true;
+                s.isAllCorrect = false;
+                renderSlide(currentSlideIndex);
+                return;
+            }
+
+            const expected1 = Number((s.app1.watt / s.supplyVolt).toFixed(2));
+            const expected2 = Number((s.app2.watt / s.supplyVolt).toFixed(2));
+            const expectedTotal = Number((expected1 + expected2).toFixed(2));
+            const expectedSafe = expectedTotal <= s.ratedAmp;
+
+            const ok1 = Math.abs(v1 - expected1) < 0.01;
+            const ok2 = Math.abs(v2 - expected2) < 0.01;
+            const okTotal = Math.abs(vTotal - expectedTotal) < 0.01;
+            const okSafe = s.ansSafe === expectedSafe;
+
+            const allOk = ok1 && ok2 && okTotal && okSafe;
+            if (allOk && !s.isAllCorrect) {
+                s.streak++;
+                s.solvedCount++;
+            } else if (!allOk) {
+                s.streak = 0;
+            }
+
+            s.checked = true;
+            s.isAllCorrect = allOk;
+
+            if (allOk) {
+                playSound(880, 'triangle', 0.25);
+            } else {
+                playSound(220, 'sawtooth', 0.2);
+            }
+            renderSlide(currentSlideIndex);
+        }
+
+        function setWorksheetProblem() {
+            playSound(600);
+            calcDrillState.problemNum = 1;
+            calcDrillState.ratedAmp = 15;
+            calcDrillState.ratedVolt = 125;
+            calcDrillState.supplyVolt = 100;
+            calcDrillState.app1 = { name: "電気ストーブ", watt: 800, icon: "🔥" };
+            calcDrillState.app2 = { name: "ノートパソコン", watt: 200, icon: "💻" };
+            calcDrillState.ans1 = "";
+            calcDrillState.ans2 = "";
+            calcDrillState.ansTotal = "";
+            calcDrillState.ansSafe = null;
+            calcDrillState.checked = false;
+            calcDrillState.isAllCorrect = false;
+            renderSlide(currentSlideIndex);
+        }
+
+        function generateRandomCalcProblem() {
+            playSound(700);
+            const idx1 = Math.floor(Math.random() * appliancePool.length);
+            let idx2 = Math.floor(Math.random() * appliancePool.length);
+            while (idx2 === idx1) {
+                idx2 = Math.floor(Math.random() * appliancePool.length);
+            }
+            const ratedOptions = [15, 15, 12];
+            const ratedAmp = ratedOptions[Math.floor(Math.random() * ratedOptions.length)];
+
+            calcDrillState.problemNum++;
+            calcDrillState.ratedAmp = ratedAmp;
+            calcDrillState.ratedVolt = 125;
+            calcDrillState.supplyVolt = 100;
+            calcDrillState.app1 = appliancePool[idx1];
+            calcDrillState.app2 = appliancePool[idx2];
+            calcDrillState.ans1 = "";
+            calcDrillState.ans2 = "";
+            calcDrillState.ansTotal = "";
+            calcDrillState.ansSafe = null;
+            calcDrillState.checked = false;
+            calcDrillState.isAllCorrect = false;
+            renderSlide(currentSlideIndex);
+        }
+
+        // スライド7：復習クイズ描画・ロジック
+        function renderQuizSlide() {
+            const total = quizQuestions.length;
+            if (quizState.current >= total) {
+                return `
+                    <div class="bg-gradient-to-br from-slate-900 to-rose-950 text-white rounded-2xl p-8 text-center my-auto space-y-5 shadow-xl">
+                        <div class="text-5xl">🏆</div>
+                        <h3 class="text-2xl sm:text-3xl font-black text-amber-400">全5問終了！結果発表</h3>
+                        <div class="text-4xl sm:text-5xl font-black">
+                            ${quizState.score} <span class="text-xl text-slate-300">/ ${total} 問正解</span>
+                        </div>
+                        <p class="text-sm text-slate-200 max-w-md mx-auto">
+                            ${quizState.score === 5 ? "パーフェクト！電気機器の安全な使い方と定格計算をマスターしました！" : "お疲れさまでした！間違えた問題は前のスライドに戻って確認しよう。"}
+                        </p>
+                        <button onclick="resetQuiz()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-6 py-3 rounded-xl transition shadow-lg">
+                            <i class="fa-solid fa-rotate-right mr-2"></i>もういちど挑戦する
+                        </button>
+                    </div>
+                `;
+            }
+
+            const qObj = quizQuestions[quizState.current];
+            const progress = (quizState.current / total) * 100;
+
+            return `
+                <div class="space-y-4 my-auto">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+                        <span>第 ${quizState.current + 1} 問 / 全 ${total} 問</span>
+                        <span>現在の正解数：${quizState.score} 問</span>
+                    </div>
+                    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                        <div class="bg-rose-500 h-full transition-all" style="width: ${progress}%"></div>
+                    </div>
+
+                    <div class="bg-slate-50 border-2 border-slate-200 rounded-2xl p-5 space-y-4">
+                        <h3 class="font-black text-slate-900 text-base sm:text-lg leading-relaxed">
+                            ${qObj.q}
+                        </h3>
+
+                        <div class="grid grid-cols-1 gap-2.5" id="quizBtnGroup">
+                            ${qObj.options.map((opt, i) => `
+                                <button onclick="answerQuiz(${i})" class="text-left bg-white hover:bg-rose-50 border-2 border-slate-200 hover:border-rose-400 rounded-xl p-3.5 font-bold text-sm sm:text-base text-slate-800 transition flex items-center gap-3">
+                                    <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center text-xs font-black shrink-0">${["A", "B", "C"][i]}</span>
+                                    <span>${opt}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+
+                        <div id="quizFeedback" class="hidden p-4 rounded-xl text-xs sm:text-sm font-bold leading-relaxed"></div>
+
+                        <div id="quizNextArea" class="hidden text-right">
+                            <button onclick="nextQuizQuestion()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition">
+                                ${quizState.current + 1 < total ? "次の問題へ →" : "結果を見る →"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function answerQuiz(selectedIdx) {
+            if (quizState.answered) return;
+            quizState.answered = true;
+
+            const qObj = quizQuestions[quizState.current];
+            const isCorrect = selectedIdx === qObj.correct;
+            if (isCorrect) quizState.score++;
+
+            const btns = document.querySelectorAll('#quizBtnGroup button');
+            btns.forEach((b, idx) => {
+                b.disabled = true;
+                if (idx === qObj.correct) {
+                    b.className = "text-left bg-emerald-500 text-white border-2 border-emerald-600 rounded-xl p-3.5 font-bold text-sm sm:text-base flex items-center gap-3";
+                } else if (idx === selectedIdx && !isCorrect) {
+                    b.className = "text-left bg-rose-500 text-white border-2 border-rose-600 rounded-xl p-3.5 font-bold text-sm sm:text-base flex items-center gap-3";
+                } else {
+                    b.classList.add('opacity-40');
+                }
+            });
+
+            const fb = document.getElementById('quizFeedback');
+            fb.classList.remove('hidden');
+            if (isCorrect) {
+                playSound(880, 'triangle', 0.2);
+                fb.className = "p-4 rounded-xl text-xs sm:text-sm font-bold leading-relaxed bg-emerald-100 text-emerald-900 border border-emerald-300";
+                fb.innerHTML = `⭕ 大正解！ ${qObj.explanation}`;
+            } else {
+                playSound(220, 'sawtooth', 0.2);
+                fb.className = "p-4 rounded-xl text-xs sm:text-sm font-bold leading-relaxed bg-rose-100 text-rose-900 border border-rose-300";
+                fb.innerHTML = `❌ 残念！ ${qObj.explanation}`;
+            }
+
+            document.getElementById('quizNextArea').classList.remove('hidden');
+        }
+
+        function nextQuizQuestion() {
+            playSound(600);
+            quizState.current++;
+            quizState.answered = false;
+            renderSlide(currentSlideIndex);
+        }
+
+        function resetQuiz() {
+            playSound(650);
+            quizState = { current: 0, score: 0, answered: false };
+            renderSlide(currentSlideIndex);
+        }
+
+        // ナビゲーション・共通UI制御
+        let currentSlideIndex = 0;
+        const totalSlides = slidesData.length;
+
+        const slideContentEl = document.getElementById('slideContent');
+        const currentSlideNumEl = document.getElementById('currentSlideNum');
+        const totalSlideNumEl = document.getElementById('totalSlideNum');
+        const progressBarEl = document.getElementById('progressBar');
+        const dotIndicatorsEl = document.getElementById('dotIndicators');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indexModal = document.getElementById('indexModal');
+        const modalIndexList = document.getElementById('modalIndexList');
+
+        function renderSlide(index) {
+            const slide = slidesData[index];
+            currentSlideNumEl.textContent = index + 1;
+            totalSlideNumEl.textContent = totalSlides;
+
+            const progressPercent = ((index + 1) / totalSlides) * 100;
+            progressBarEl.style.width = `${progressPercent}%`;
+
+            slideContentEl.className = "slide-enter flex-grow flex flex-col justify-between";
+            slideContentEl.innerHTML = `
+                <div class="flex-grow flex flex-col">
+                    <div class="mb-2">
+                        <span class="bg-rose-100 text-rose-900 text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5 border border-rose-300">
+                            <i class="fa-solid fa-shield-halved text-rose-600"></i>
+                            ${slide.tag}
+                        </span>
+                    </div>
+                    <h2 class="text-xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
+                        ${slide.title}
+                    </h2>
+                    <p class="text-slate-500 text-xs sm:text-sm mt-1 mb-4 font-medium">
+                        ${slide.subtitle}
+                    </p>
+                    <div class="flex-grow flex flex-col justify-center">
+                        ${slide.render()}
+                    </div>
+                </div>
+            `;
+
+            prevBtn.disabled = index === 0;
+            if (index === totalSlides - 1) {
+                nextBtn.classList.remove('bg-rose-600', 'hover:bg-rose-700');
+                nextBtn.classList.add('bg-slate-700', 'hover:bg-slate-800');
+            } else {
+                nextBtn.classList.remove('bg-slate-700', 'hover:bg-slate-800');
+                nextBtn.classList.add('bg-rose-600', 'hover:bg-rose-700');
+            }
+
+            updateDots(index);
+        }
+
+        function createDots() {
+            dotIndicatorsEl.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('button');
+                dot.className = `w-3 h-3 rounded-full transition-all duration-200 ${i === currentSlideIndex ? 'bg-rose-600 w-6' : 'bg-slate-300 hover:bg-slate-400'}`;
+                dot.title = `スライド ${i + 1}`;
+                dot.onclick = () => jumpToSlide(i);
+                dotIndicatorsEl.appendChild(dot);
+            }
+        }
+
+        function updateDots(activeIndex) {
+            const dots = dotIndicatorsEl.children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === activeIndex) {
+                    dots[i].className = "w-6 h-3 bg-rose-600 rounded-full transition-all duration-200";
+                } else {
+                    dots[i].className = "w-3 h-3 bg-slate-300 hover:bg-slate-400 rounded-full transition-all duration-200";
+                }
+            }
+        }
+
+        function changeSlide(direction) {
+            const newIndex = currentSlideIndex + direction;
+            if (newIndex >= 0 && newIndex < totalSlides) {
+                playSound(500 + direction * 100);
+                currentSlideIndex = newIndex;
+                renderSlide(currentSlideIndex);
+            }
+        }
+
+        function jumpToSlide(index) {
+            if (index >= 0 && index < totalSlides) {
+                playSound(550);
+                currentSlideIndex = index;
+                renderSlide(currentSlideIndex);
+                closeIndexModal();
+            }
+        }
+
+        function openIndexModal() {
+            playSound(600);
+            modalIndexList.innerHTML = slidesData.map((s, idx) => `
+                <button onclick="jumpToSlide(${idx})" class="p-3 text-left rounded-xl border ${idx === currentSlideIndex ? 'border-rose-500 bg-rose-50/80 font-bold' : 'border-slate-200 hover:bg-slate-50'} transition flex items-center justify-between group">
+                    <div>
+                        <span class="text-xs font-bold text-rose-600 block">${s.tag}</span>
+                        <span class="text-sm text-slate-800">${s.title}</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400 group-hover:text-rose-500 transition"></i>
+                </button>
+            `).join('');
+
+            indexModal.classList.remove('hidden');
+            setTimeout(() => indexModal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeIndexModal() {
+            indexModal.classList.add('opacity-0');
+            setTimeout(() => indexModal.classList.add('hidden'), 200);
+        }
+
+        function toggleFullscreen() {
+            playSound(650);
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+                document.getElementById('fullscreenIcon').className = "fa-solid fa-compress";
+                document.getElementById('fullscreenText').textContent = "標準";
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+                document.getElementById('fullscreenIcon').className = "fa-solid fa-expand";
+                document.getElementById('fullscreenText').textContent = "大画面";
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+            if (e.key === 'ArrowRight') changeSlide(1);
+            else if (e.key === 'ArrowLeft') changeSlide(-1);
+            else if (e.key === 'Escape') closeIndexModal();
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            createDots();
+            renderSlide(currentSlideIndex);
+        });
+    </script>
+</body>
+</html>
